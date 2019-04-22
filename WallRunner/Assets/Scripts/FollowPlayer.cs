@@ -27,4 +27,9 @@ public class FollowPlayer : MonoBehaviour
         Vector3 moveDir = (target.forward * player.forwardMoveSpeed);
         controller.Move(moveDir * Time.deltaTime);
     }
+
+    public void RespawnCamera()
+    {
+        transform.position = new Vector3(0.0f, target.position.y + yOffset, target.position.z - zOffset);
+    }
 }

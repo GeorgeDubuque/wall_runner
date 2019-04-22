@@ -10,6 +10,7 @@ public class Player : MonoBehaviour {
     bool canMove;
     public int numCoins = 0;
     public GameObject sparks;
+    public Transform spawnPoint;
 
     // Input
     bool moveLeft = false;
@@ -17,6 +18,7 @@ public class Player : MonoBehaviour {
 
     // Start is called before the first frame update
     void Start ( ) {
+        transform.position = spawnPoint.position;
         controller = GetComponent<CharacterController>();
         Debug.Log(controller.collisionFlags);
     }
