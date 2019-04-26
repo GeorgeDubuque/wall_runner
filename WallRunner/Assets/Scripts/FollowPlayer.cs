@@ -24,7 +24,7 @@ public class FollowPlayer : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Vector3 moveDir = (target.forward * player.forwardMoveSpeed);
+        Vector3 moveDir = (Vector3.forward * forwardSpeed);
         controller.Move(moveDir * Time.deltaTime);
     }
 

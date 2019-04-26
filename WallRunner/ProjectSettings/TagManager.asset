@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Wall
   - Coin
+  - 3DTilemap
   layers:
   - Default
   - TransparentFX
@@ -17,8 +18,8 @@ TagManager:
   - 
   - PostProcessing
   - Player
-  - 
-  - 
+  - 3DGrid
+  - Wall
   - 
   - 
   - 
