@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+#if UNITY_EDITOR
 using UnityEngine;
 
 [ExecuteInEditMode]
@@ -15,3 +16,4 @@ public class Tilemap3 : MonoBehaviour
     public modeEnum mode;
     
 }
+#endif

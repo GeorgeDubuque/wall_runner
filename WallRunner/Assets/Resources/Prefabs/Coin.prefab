@@ -86,6 +86,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rotateSpeed: 100
+  particles: {fileID: 8315347755824823912, guid: a844a42efa84257438396b17cd816c3d,
+    type: 3}
 --- !u!33 &72478004748250303
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -136,3 +138,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 11afee1cb5435d9409a0451c19a4c90f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  destroyColor: {r: 1, g: 0, b: 0, a: 1}

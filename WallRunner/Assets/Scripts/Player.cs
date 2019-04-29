@@ -5,7 +5,7 @@ using UnityEngine;
 public class Player : MonoBehaviour {
     CharacterController controller;
     public float forwardMoveSpeed;
-    public float horizonMoveSpeed;
+    float speed = 0.0f;
     Vector3 horizontalMove = Vector3.right;
     Vector3 verticalMove = Vector3.forward;
     Vector3 moveDir = Vector3.zero;
@@ -28,6 +28,7 @@ public class Player : MonoBehaviour {
 
     // Start is called before the first frame update
     void Start ( ) {
+        SwipeDetector.OnSwipe += SwipeDetector_OnSwipe;
         anim = GetComponentInChildren<Animator>();
         transform.position = spawnPoint.position;
         controller = GetComponent<CharacterController>();
@@ -37,38 +38,59 @@ public class Player : MonoBehaviour {
 
     // Update is called once per frame
     void Update ( ) {
-        PlayerInput();
-        if(controller.velocity.magnitude > 0.01) {
-            anim.SetBool("Move", true);
-        } else {
-            anim.SetBool("Move", false);
-        }
         if (moveLeft && canMove) {
-            initHit = true;
-            //anim.SetBool("Move",true);
+            anim.SetBool("Move", true);
             canMove = false;
             transform.forward = -Vector3.right;
+            speed = 0.0f;
+
         }
         if (moveRight && canMove) {
             canMove = false;
-            initHit = true;
-            //anim.SetBool("Move", true);
+            anim.SetBool("Move", true);
             transform.forward = Vector3.right;
+            speed = 0.0f;
+
         }
-        if(moveForward && canMove) {
+        if (moveForward && canMove) {
             canMove = false;
-            initHit = true;
-            //anim.SetBool("Move", true);
+            anim.SetBool("Move", true);
             transform.forward = Vector3.forward;
+            speed = 0.0f;
+
         }
         if (moveBackward && canMove) {
             canMove = false;
-            initHit = true;
-            //anim.SetBool("Move", true);
+            anim.SetBool("Move", true);
             transform.forward = -Vector3.forward;
+            speed = 0.0f;
+
         }
+        anim.SetFloat("Velocity", controller.velocity.magnitude);
+        PlayerInput();
+
+        if(speed > 0f) {
+            if (Physics.Raycast(transform.position, transform.forward * 2, 1 << LayerMask.NameToLayer("Wall"))) {
+                anim.SetBool("Move", false);
+            }
+        }
+
+        if (!canMove) {
+            
+            speed += 100f * Time.deltaTime;
+        } else {
+            speed = 0.0f;
+        }
+        
         //transform.forward = controller.velocity.normalized;
-        controller.Move(transform.forward * forwardMoveSpeed * Time.deltaTime);
+        controller.Move(transform.forward * speed * Time.deltaTime);
+    }
+
+    private void SwipeDetector_OnSwipe(SwipeData data ) {
+        moveRight = data.Direcion == SwipeDirection.Right;
+        moveLeft = data.Direcion == SwipeDirection.Left;
+        moveForward = data.Direcion == SwipeDirection.Up;
+        moveBackward = data.Direcion == SwipeDirection.Down;
     }
 
     void PlayerInput ( ) {
@@ -82,37 +104,32 @@ public class Player : MonoBehaviour {
         if (other.CompareTag("Coin")) {
             numCoins++;
         }
-        
     }
 
     private void OnTriggerStay ( Collider other ) {
-        RaycastHit rightHit;
-        RaycastHit leftHit;
-        RaycastHit frontHit;
-        RaycastHit backHit;
-        int layerMask = 1 << 9; //Player Layer Mask
+        RaycastHit hit;
+        int layerMask = LayerMask.NameToLayer("Wall"); //Player Layer Mask
         layerMask = ~layerMask;
         
         if (other.CompareTag("Wall")) {
-            if(controller.velocity.magnitude == 0){
-                if (initHit) {
-                    anim.SetBool("HitWall",true);
-                    initHit = false;
-                }
+            
+            if (controller.velocity.magnitude == 0){
                 canMove = true;
                 sparks.SetActive(false);
             } else {
+                
                 if(sparks.activeSelf == false) {
                     sparks.SetActive(true);
                 }
-                if (Physics.Raycast(transform.position, transform.right, out rightHit, 1f, layerMask)) {
-                    sparks.transform.position = rightHit.point;
-                } else if (Physics.Raycast(transform.position, -transform.right, out leftHit, 1f, layerMask)) {
-                    sparks.transform.position = leftHit.point;
-                } else if (Physics.Raycast(transform.position, transform.forward, out frontHit, 1f, layerMask)) {
-                    sparks.transform.position = frontHit.point;
-                } else if (Physics.Raycast(transform.position, -transform.forward, out backHit, 1f, layerMask)) {
-                    sparks.transform.position = backHit.point;
+
+                if (Physics.Raycast(transform.position, transform.right, out hit, 1f, layerMask)) {
+                    sparks.transform.position = hit.point;
+                } else if (Physics.Raycast(transform.position, -transform.right, out hit, 1f, layerMask)) {
+                    sparks.transform.position = hit.point;
+                } else if (Physics.Raycast(transform.position, transform.forward, out hit, 1f, layerMask)) {
+                    sparks.transform.position = hit.point;
+                } else if (Physics.Raycast(transform.position, -transform.forward, out hit, 1f, layerMask)) {
+                    sparks.transform.position = hit.point;
                 } else {
                     sparks.SetActive(false);
                 }
@@ -121,8 +138,14 @@ public class Player : MonoBehaviour {
         }
     }
 
+    private Vector3 GetCenterOfFace(Collider coll, Vector3 hitPoint) {
+        return coll.bounds.center;
+    }
+
     private void OnTriggerExit ( Collider other ) {
         if (other.CompareTag("Wall")) {
+            initHit = true;
+
             canMove = false;
         }
     }

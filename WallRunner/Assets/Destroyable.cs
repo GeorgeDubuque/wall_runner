@@ -15,11 +15,11 @@ public class Destroyable : MonoBehaviour
     void Start()
     {
         destroyPoint = GameObject.Find("DestroyLevelPoint").transform;
-        colorGradient = new Gradient();
-        Color matColor = transform.GetComponent<Renderer>().material.color;
-        GradientColorKey startColor = new GradientColorKey(matColor, 0);
-        GradientColorKey endColor = new GradientColorKey(destroyColor, 1);
-        colorGradient.colorKeys = new GradientColorKey[] { startColor, endColor };
+        //colorGradient = new Gradient();
+        //Color matColor = transform.GetComponent<Renderer>().material.color;
+        //GradientColorKey startColor = new GradientColorKey(matColor, 0);
+        //GradientColorKey endColor = new GradientColorKey(destroyColor, 1);
+        //colorGradient.colorKeys = new GradientColorKey[] { startColor, endColor };
         rb = GetComponent<Rigidbody>();
     }
 
@@ -31,13 +31,13 @@ public class Destroyable : MonoBehaviour
             frozen = false;
             UnFreeze();   
         }
-        if (transform.position.z < (destroyPoint.position.z + colorChangeOffset)) {
-            if (currColor < 1.0f) {
-                currColor += 0.5f * Time.deltaTime;
-                transform.GetComponent<Renderer>().material.SetColor("_Color", colorGradient.Evaluate(currColor));
+        //if (transform.position.z < (destroyPoint.position.z + colorChangeOffset)) {
+        //    if (currColor < 1.0f) {
+        //        currColor += 0.5f * Time.deltaTime;
+        //        transform.GetComponent<Renderer>().material.SetColor("_Color", colorGradient.Evaluate(currColor));
 
-            }
-        }
+        //    }
+        //}
         if (!frozen) {
             if (transform.position.y < -50) {
                 Destroy(gameObject);

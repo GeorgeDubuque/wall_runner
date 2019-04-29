@@ -5,6 +5,7 @@ using UnityEngine;
 public class Coin : MonoBehaviour
 {
     public float rotateSpeed;
+    public GameObject particles;
 
     // Start is called before the first frame update
     void Start()
@@ -21,6 +22,8 @@ public class Coin : MonoBehaviour
 
     private void OnTriggerEnter ( Collider other ) {
         if (other.CompareTag("Player")) {
+            GameObject particle = Instantiate(particles, transform.position, Quaternion.identity);
+            Destroy(particle, 2);
             Destroy(gameObject);
         }
     }
