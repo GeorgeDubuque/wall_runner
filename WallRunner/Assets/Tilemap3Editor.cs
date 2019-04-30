@@ -9,6 +9,9 @@ public class Tilemap3Editor : Editor
     GameObject scriptObject;
     Tilemap3.modeEnum mode;
     int hashCode;
+    Collider coll;
+    GameObject hitScriptObj;
+    GameObject hitNonScriptObj;
 
     private void OnEnable ( ) {
         hashCode = GetHashCode();
@@ -16,6 +19,7 @@ public class Tilemap3Editor : Editor
         tilemap = (Tilemap3)target;
         scriptObject = tilemap.tile;
         mode = tilemap.mode;
+        coll = tilemap.coll;
     }
 
     public override void OnInspectorGUI ( ) {
@@ -26,9 +30,11 @@ public class Tilemap3Editor : Editor
         tilemap = (Tilemap3)target;
         scriptObject = tilemap.tile;
         mode = tilemap.mode;
+        coll = tilemap.coll;
     }
 
     private void OnSceneGUI ( ) {
+        coll = tilemap.coll;
         mode = tilemap.mode;
         scriptObject = tilemap.tile;
         Event currentEvent = Event.current;
@@ -39,29 +45,55 @@ public class Tilemap3Editor : Editor
             Ray worldRay = HandleUtility.GUIPointToWorldRay(Event.current.mousePosition);
             RaycastHit hitInfo;
 
-            if (Physics.Raycast(worldRay, out hitInfo)) {
+            if (coll.Raycast(worldRay, out hitInfo, 1000f)) {
                 GameObject hitObj = hitInfo.collider.gameObject;
+                Debug.Log(scriptObject.tag);
                 Debug.Log(hitObj.tag);
-                if (hitObj.CompareTag("3DTilemap") && mode == Tilemap3.modeEnum.Draw) {
-                    Debug.Log("hit tilemap");
+                if (hitObj.CompareTag("3DTilemap")) {
                     Vector3 hitPoint = hitInfo.point;
                     hitPoint = new Vector3(Mathf.RoundToInt(hitPoint.x), Mathf.RoundToInt(hitPoint.y), Mathf.RoundToInt(hitPoint.z));
-                    if(!Physics.CheckBox(center : hitPoint, halfExtents: new Vector3(.4f, .4f, .4f), Quaternion.identity, layerMask : (1<<LayerMask.NameToLayer("3DTilemap")))) {
+                    Collider[] colls = 
+                    Physics.OverlapBox(center: hitPoint, halfExtents: new Vector3(.4f, .4f, .4f), Quaternion.identity);
+                    bool hitATile = HitTile(colls);
+                    if (!hitATile && mode == Tilemap3.modeEnum.Draw) {
                         GameObject obj = PrefabUtility.InstantiatePrefab(scriptObject as GameObject) as GameObject;
                         obj.transform.position = hitPoint;
                         obj.transform.parent = hitObj.transform;
                     } else {
-                        Debug.Log("already a tile there?");
+                        if(mode == Tilemap3.modeEnum.Erase)
+                        {
+                            if(hitScriptObj != null)
+                            {
+                                hitScriptObj.transform.parent = null;
+                                DestroyImmediate(hitScriptObj);
+                            }
+                        }
                     }
                     
-                }else if (hitObj.CompareTag(scriptObject.tag) && mode == Tilemap3.modeEnum.Erase) {
-                    hitObj.transform.parent = null;
-                    DestroyImmediate(hitObj);
                 }
             }
 
             Event.current.Use();
         }
+    }
+
+    bool HitTile(Collider[] colls)
+    {
+        bool hitTile = false;
+        foreach(Collider currColl in colls)
+        {
+            if (currColl.CompareTag(scriptObject.tag))
+            {
+                hitTile = true;
+                hitScriptObj = currColl.gameObject;
+            }else if (!currColl.CompareTag("3DTilemap"))
+            {
+                hitTile = true;
+                hitNonScriptObj = currColl.gameObject;
+            }
+        }
+
+        return hitTile;
     }
 }
 #endif

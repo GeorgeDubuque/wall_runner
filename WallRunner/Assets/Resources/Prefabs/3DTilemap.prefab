@@ -47,6 +47,7 @@ MonoBehaviour:
   tile: {fileID: 5826679858009523654, guid: 9c307632d31ef604e8d34c1d0bc25f88, type: 3}
   snap: {x: 0, y: 0, z: 0}
   mode: 0
+  coll: {fileID: 7689327666207254368}
 --- !u!1 &7689327666207254374
 GameObject:
   m_ObjectHideFlags: 0

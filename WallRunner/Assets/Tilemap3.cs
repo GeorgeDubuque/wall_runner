@@ -14,6 +14,8 @@ public class Tilemap3 : MonoBehaviour
     public Vector3 snap;
 
     public modeEnum mode;
+
+    public Collider coll;
     
 }
 #endif

@@ -14,7 +14,6 @@ public class SoundController : MonoBehaviour
     }
 
     public void PlaySplat ( ) {
-        Debug.Log("PlaySplat");
         source.clip = splat;
         source.Play();
     }
