@@ -6,10 +6,12 @@ using UnityEngine;
 public class Level
 {
     public string name;
-    public string grade = "";
+    public string letterGrade = "";
+    public float gradePercent = 0.0f;
 
-    public Level(string name, string grade ) {
+    public Level(string name, string letterGrade, float gradePercent ) {
         this.name = name;
-        this.grade = grade;
+        this.letterGrade = letterGrade;
+        this.gradePercent = gradePercent;
     }
 }

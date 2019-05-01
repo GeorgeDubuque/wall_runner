@@ -16,6 +16,8 @@ public class Tilemap3 : MonoBehaviour
     public modeEnum mode;
 
     public Collider coll;
+
+    public Dictionary<Vector3, GameObject> tiles = new Dictionary<Vector3, GameObject>();
     
 }
 #endif

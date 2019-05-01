@@ -36,9 +36,9 @@ public class GameManager : MonoBehaviour
             if (playerWin)
             {
                 if (!finishAnimator.enabled) {
+                    float gradePercent = (currScore / totalCoins) * 100f;
                     scoreAnimator.finalScore = currScore;
-                    Debug.Log(currScore / totalCoins);
-                    scoreAnimator.gradeScore = LetterGrade((currScore / totalCoins)*100f);
+                    scoreAnimator.SetGrade(LetterGrade(gradePercent), gradePercent);
                     scoreAnimator.totalNumCoins = (int)totalCoins;
                     finishAnimator.enabled = true;
                 }

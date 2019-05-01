@@ -5,7 +5,8 @@ using UnityEngine.SceneManagement;
 public class ScoreAnimator : MonoBehaviour
 {
     public float finalScore = 0;
-    public string gradeScore = "";
+    public string letterGrade = "";
+    public float gradePercent = 0f;
     public int totalNumCoins = 0;
     float animScore = 0;
     public TextMeshProUGUI scoreText;
@@ -13,11 +14,12 @@ public class ScoreAnimator : MonoBehaviour
     public GameObject totalCoins;
     public GameObject totalScore;
     public GameObject grade;
-
+    Level currLevel;
     Animator anim;
 
     private void Start ( ) {
         anim = GetComponent<Animator>();
+        currLevel = PlayerData.levelDict[SceneManager.GetActiveScene().name];
     }
 
     public void IncreaseAnimScore ( ) {
@@ -45,13 +47,19 @@ public class ScoreAnimator : MonoBehaviour
     }
 
     public void ShowGrade ( ) {
-        grade.GetComponent<TextMeshProUGUI>().text = gradeScore;
+        grade.GetComponent<TextMeshProUGUI>().text = this.letterGrade;
         grade.SetActive(true);
     }
 
+    public void SetGrade(string newLetterGrade, float newGradePercent ) {
+        this.letterGrade = newLetterGrade;
+        if (currLevel.gradePercent < newGradePercent) {
+            currLevel.gradePercent = newGradePercent;
+            currLevel.letterGrade = newLetterGrade;
+        }
+    }
+
     public void LoadMainMenu ( ) {
-        string sceneName = SceneManager.GetActiveScene().name;
-        PlayerData.levelDict[sceneName].grade = gradeScore;
         SceneManager.LoadScene("MainMenu");
     }
 }
