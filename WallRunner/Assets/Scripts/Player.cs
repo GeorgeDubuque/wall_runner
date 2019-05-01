@@ -15,6 +15,7 @@ public class Player : MonoBehaviour {
     public Transform spawnPoint;
     public float sizeDec = .01f;
     Vector3 sizeDecVect;
+    public FollowPlayer cam;
 
     Animator anim;
     bool initHit = true;
@@ -31,6 +32,7 @@ public class Player : MonoBehaviour {
         SwipeDetector.OnSwipe += SwipeDetector_OnSwipe;
         anim = GetComponentInChildren<Animator>();
         transform.position = spawnPoint.position;
+        cam.RespawnCamera();
         controller = GetComponent<CharacterController>();
         sizeDecVect = new Vector3(sizeDec, sizeDec, sizeDec);
         //moveDir = -transform.right * forwardMoveSpeed;

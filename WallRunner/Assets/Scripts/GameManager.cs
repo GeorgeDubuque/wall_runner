@@ -11,16 +11,13 @@ public class GameManager : MonoBehaviour
     public Camera cam;
     public Transform spawn;
     public Transform win;
-    public GameObject score;
     public float totalCoins;
-    TextMeshProUGUI scoreText;
-    public TextMeshProUGUI finishText;
-    public TextMeshProUGUI finalScoreText;
-    Animator scoreAnimator;
+    public Animator finishAnimator;
+    public ScoreAnimator scoreAnimator;
+    int animScore = 0;
     public GameObject coinGrid;
     float prevScore = 0;
-    float currScore = 0;
-
+    public float currScore = 0;
     bool playerOffScreen = false;
     bool playerWin = false;
     bool gameOver = false;
@@ -28,43 +25,35 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         player = playerObj.GetComponent<Player>();
-        scoreText = score.GetComponent<TextMeshProUGUI>();
-        scoreAnimator = score.GetComponent<Animator>();
         totalCoins = coinGrid.transform.childCount;
     }
 
     // Update is called once per frame
     void Update()
     {
-        CheckPlayerDead();
-        CheckPlayerWin();
-        gameOver = playerOffScreen  || playerWin;
-        currScore = player.numCoins;
-        if(prevScore != currScore) {
-            scoreAnimator.SetTrigger("Scored");
-            scoreText.text = currScore.ToString();
-            prevScore = currScore;
-        }
         if (gameOver)
         {
             if (playerWin)
             {
-                DisplayWin();
+                if (!finishAnimator.enabled) {
+                    scoreAnimator.finalScore = currScore;
+                    Debug.Log(currScore / totalCoins);
+                    scoreAnimator.gradeScore = LetterGrade((currScore / totalCoins)*100f);
+                    scoreAnimator.totalNumCoins = (int)totalCoins;
+                    finishAnimator.enabled = true;
+                }
             }
             else
             {
                 GameOver();
             }
+        } else {
+            CheckPlayerDead();
+            CheckPlayerWin();
+            gameOver = playerOffScreen || playerWin;
+            currScore = player.numCoins;
+            
         }
-    }
-
-    void DisplayWin()
-    {
-        finishText.enabled = true;
-        float scorePercent =(currScore / totalCoins) * 100f;
-        Debug.Log(scorePercent);
-        finalScoreText.text = "Score: " + LetterGrade(scorePercent);
-        finalScoreText.enabled = true;
     }
 
     string LetterGrade(float scorePercent)
@@ -140,9 +129,15 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    void NextLevel ( ) {
+        PlayerData.currLevelInd++;
+        SceneManager.LoadScene(PlayerData.levels[PlayerData.currLevelInd].name);
+        playerWin = false;
+        playerOffScreen = false;
+    }
+    
     void GameOver()
     {
-        Scene currScene = SceneManager.GetActiveScene();
-        SceneManager.LoadScene(currScene.buildIndex);
+        SceneManager.LoadScene("MainMenu");
     }
 }
