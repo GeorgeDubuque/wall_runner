@@ -11,6 +11,7 @@ public class Destroyable : MonoBehaviour
     Gradient colorGradient;
     public Color destroyColor = Color.red;
     float currColor = 0.0f;
+    public Vector3 position;
     // Start is called before the first frame update
     void Start()
     {

@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 #if UNITY_EDITOR
 using UnityEditor;
+using UnityEditor.SceneManagement;
 
 [CustomEditor(typeof(Tilemap3))]
 public class Tilemap3Editor : Editor
@@ -15,7 +16,6 @@ public class Tilemap3Editor : Editor
 
     private void OnEnable ( ) {
         hashCode = GetHashCode();
-
         tilemap = (Tilemap3)target;
         tile = tilemap.tile;
         mode = tilemap.mode;
@@ -52,15 +52,16 @@ public class Tilemap3Editor : Editor
                     Vector3 hitPoint = hitInfo.point;
                     hitPoint = new Vector3(Mathf.RoundToInt(hitPoint.x), Mathf.RoundToInt(hitPoint.y), Mathf.RoundToInt(hitPoint.z));
                     GameObject obj;
-                    bool tileHere = tilemap.tiles.TryGetValue(hitPoint, out obj);
+                    bool tileHere = tilemap.tiles.TryGetValue(hitPoint.ToString(), out obj);
                     if (!tileHere && mode == Tilemap3.modeEnum.Draw) {
                         obj = PrefabUtility.InstantiatePrefab(tile as GameObject) as GameObject;
                         obj.transform.position = hitPoint;
                         obj.transform.parent = hitObj.transform;
-                        tilemap.tiles.Add(hitPoint, obj);
+                        tilemap.tiles.Add(hitPoint.ToString(), obj);
                     } else if(tileHere && mode == Tilemap3.modeEnum.Erase) {
+                        Debug.Log("Erase");
                         obj.transform.parent = null;
-                        tilemap.tiles.Remove(hitPoint);
+                        tilemap.tiles.Remove(hitPoint.ToString());
                         DestroyImmediate(obj);
                     }
                 }
@@ -68,5 +69,6 @@ public class Tilemap3Editor : Editor
             currentEvent.Use();
         }
     }
+
 }
 #endif

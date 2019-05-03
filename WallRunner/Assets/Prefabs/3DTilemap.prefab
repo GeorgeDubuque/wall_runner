@@ -39,7 +39,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7689327666010669857}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ffb6cb1f20ad88241a3e5bdff3aee4e6, type: 3}
   m_Name: 
@@ -48,6 +48,8 @@ MonoBehaviour:
   snap: {x: 0, y: 0, z: 0}
   mode: 0
   coll: {fileID: 7689327666207254368}
+  grid: {fileID: 7689327666207254374}
+  tileLocations: []
 --- !u!1 &7689327666207254374
 GameObject:
   m_ObjectHideFlags: 0

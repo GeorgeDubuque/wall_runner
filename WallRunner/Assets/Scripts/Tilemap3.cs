@@ -2,10 +2,14 @@
 using System.Collections.Generic;
 #if UNITY_EDITOR
 using UnityEngine;
+using UnityEditor;
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
+using UnityEditor.SceneManagement;
+
 
 [ExecuteInEditMode]
-public class Tilemap3 : MonoBehaviour
-{
+public class Tilemap3 : MonoBehaviour {
     public GameObject tile;
     public enum modeEnum {
         Draw,
@@ -17,7 +21,24 @@ public class Tilemap3 : MonoBehaviour
 
     public Collider coll;
 
-    public Dictionary<Vector3, GameObject> tiles = new Dictionary<Vector3, GameObject>();
-    
+    public GameObject grid;
+
+    public Dictionary<string, GameObject> tiles = new Dictionary<string, GameObject>();
+
+    private void Awake ( ) {
+        Debug.Log(gameObject.name + " Awake");
+        InitializeTiles();
+    }
+
+    public void InitializeTiles ( ) {
+        Debug.Log("Init Tiles");
+        tiles = new Dictionary<string, GameObject>();
+        for(int i = 0; i < grid.transform.childCount; i++) {
+            GameObject currChild = grid.transform.GetChild(i).gameObject;
+            Debug.Log(currChild.transform.position);
+            tiles.Add(currChild.transform.position.ToString(), currChild);
+        }
+    }
+
 }
 #endif
