@@ -11,18 +11,9 @@ using UnityEditor.SceneManagement;
 [ExecuteInEditMode]
 public class Tilemap3 : MonoBehaviour {
     public GameObject tile;
-    public enum modeEnum {
-        Draw,
-        Erase
-    }
     public Vector3 snap;
-
-    public modeEnum mode;
-
     public Collider coll;
-
     public GameObject grid;
-
     public Dictionary<string, GameObject> tiles = new Dictionary<string, GameObject>();
 
     private void Awake ( ) {
@@ -35,10 +26,12 @@ public class Tilemap3 : MonoBehaviour {
         tiles = new Dictionary<string, GameObject>();
         for(int i = 0; i < grid.transform.childCount; i++) {
             GameObject currChild = grid.transform.GetChild(i).gameObject;
-            Debug.Log(currChild.transform.position);
-            tiles.Add(currChild.transform.position.ToString(), currChild);
+            string tileKey = currChild.transform.position.ToString();
+            if (tiles.ContainsKey(tileKey)) {
+                tiles.Remove(tileKey);
+            }
+            tiles.Add(tileKey, currChild);
         }
     }
-
 }
 #endif

@@ -10,15 +10,15 @@ public class Tilemap3Editor : Editor
 {
     Tilemap3 tilemap;
     GameObject tile;
-    Tilemap3.modeEnum mode;
     int hashCode;
     Collider coll;
+    bool mouseDown = false;
+    bool ctrlDown = false;
 
     private void OnEnable ( ) {
         hashCode = GetHashCode();
         tilemap = (Tilemap3)target;
         tile = tilemap.tile;
-        mode = tilemap.mode;
         coll = tilemap.coll;
     }
 
@@ -28,24 +28,25 @@ public class Tilemap3Editor : Editor
         hashCode = GetHashCode();
         tilemap = (Tilemap3)target;
         tile = tilemap.tile;
-        mode = tilemap.mode;
         coll = tilemap.coll;
     }
 
     private void OnSceneGUI ( ) {
         tilemap = (Tilemap3)target;
         coll = tilemap.coll;
-        mode = tilemap.mode;
         tile = tilemap.tile;
         
         Event currentEvent = Event.current;
         if (currentEvent.type == EventType.Layout) {
             HandleUtility.AddDefaultControl(GUIUtility.GetControlID(GetHashCode(), FocusType.Passive));
         }
-        if ((currentEvent.type == EventType.MouseDrag && currentEvent.button == 0) || (currentEvent.type == EventType.MouseDown && currentEvent.button == 0)) {
+
+        IsMouseDown(currentEvent);
+        IsCtrlHeld(currentEvent);
+
+        if (mouseDown) {
             Ray worldRay = HandleUtility.GUIPointToWorldRay(currentEvent.mousePosition);
             RaycastHit hitInfo;
-
             if (coll.Raycast(worldRay, out hitInfo, 1000f)) {
                 GameObject hitObj = hitInfo.collider.gameObject;
                 if (hitObj.CompareTag("3DTilemap")) {
@@ -53,13 +54,12 @@ public class Tilemap3Editor : Editor
                     hitPoint = new Vector3(Mathf.RoundToInt(hitPoint.x), Mathf.RoundToInt(hitPoint.y), Mathf.RoundToInt(hitPoint.z));
                     GameObject obj;
                     bool tileHere = tilemap.tiles.TryGetValue(hitPoint.ToString(), out obj);
-                    if (!tileHere && mode == Tilemap3.modeEnum.Draw) {
+                    if (!tileHere && mouseDown && !ctrlDown) {
                         obj = PrefabUtility.InstantiatePrefab(tile as GameObject) as GameObject;
                         obj.transform.position = hitPoint;
                         obj.transform.parent = hitObj.transform;
                         tilemap.tiles.Add(hitPoint.ToString(), obj);
-                    } else if(tileHere && mode == Tilemap3.modeEnum.Erase) {
-                        Debug.Log("Erase");
+                    } else if (tileHere && mouseDown && ctrlDown) {
                         obj.transform.parent = null;
                         tilemap.tiles.Remove(hitPoint.ToString());
                         DestroyImmediate(obj);
@@ -67,6 +67,24 @@ public class Tilemap3Editor : Editor
                 }
             }
             currentEvent.Use();
+        }
+    }
+
+    void IsMouseDown ( Event currEvent ) {
+        if(currEvent.type == EventType.MouseDown && currEvent.button == 0) {
+            mouseDown = true;
+        }
+        if(currEvent.type == EventType.MouseUp && currEvent.button == 0) {
+            mouseDown = false;
+        }
+    }
+
+    void IsCtrlHeld (Event currEvent ) {
+        if(currEvent.type == EventType.KeyDown && currEvent.keyCode == KeyCode.LeftControl) {
+            ctrlDown = true;
+        }
+        if (currEvent.type == EventType.KeyUp && currEvent.keyCode == KeyCode.LeftControl) {
+            ctrlDown = false;
         }
     }
 
